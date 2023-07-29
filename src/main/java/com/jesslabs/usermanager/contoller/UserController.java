@@ -1,5 +1,6 @@
 package com.jesslabs.usermanager.contoller;
 
+import com.jesslabs.usermanager.common.ApiConstant;
 import com.jesslabs.usermanager.dto.*;
 import com.jesslabs.usermanager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +10,6 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * @author barbo on 23-03-2023
- */
-
 @RestController
 @RequestMapping(value = "/um")
 public class UserController {
@@ -20,7 +17,7 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @PostMapping(value = "/add/user")
+    @PostMapping(value = ApiConstant.ADD_USER)
     public ResponseEntity<AddUserResponseDTO> addUser(@RequestHeader HttpHeaders headers,
                                                       @RequestBody AddUserRequestDTO request) throws Exception {
         AddUserResponseDTO response = null;
@@ -32,9 +29,9 @@ public class UserController {
         }
     }
 
-    @PutMapping(value = "/update/user")
+    @PutMapping(value = ApiConstant.UPDATE_USER)
     public ResponseEntity<UpdateUserResponseDTO> updateUser(@RequestHeader HttpHeaders headers,
-                                                      @RequestBody UpdateUserRequestDTO request) throws Exception {
+                                                            @RequestBody UpdateUserRequestDTO request) throws Exception {
         UpdateUserResponseDTO response = null;
         try {
             response = this.userService.updateUser(request);
@@ -44,7 +41,7 @@ public class UserController {
         }
     }
 
-    @GetMapping(value = "/get/users")
+    @GetMapping(value = ApiConstant.GET_USERS)
     public ResponseEntity<GetUsersPagedDTO> getUsers(@RequestHeader HttpHeaders headers,
                                                      @RequestParam(defaultValue = "10") Integer pageSize,
                                                      @RequestParam(defaultValue = "0") Integer pageNo,

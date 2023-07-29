@@ -3,10 +3,6 @@ package com.jesslabs.usermanager.service;
 import com.jesslabs.usermanager.dto.*;
 import org.springframework.stereotype.Service;
 
-/**
- * @author barbo on 23-03-2023
- */
-
 @Service
 public interface UserService {
 
@@ -15,7 +11,7 @@ public interface UserService {
      * @return
      * @throws Exception
      */
-    public AddUserResponseDTO addUser(AddUserRequestDTO userAddRequestDTO) throws Exception;
+    AddUserResponseDTO addUser(AddUserRequestDTO userAddRequestDTO) throws Exception;
 
 
     /**
@@ -23,7 +19,7 @@ public interface UserService {
      * @return
      * @throws Exception
      */
-    public UpdateUserResponseDTO updateUser(UpdateUserRequestDTO userUpdateRequestDTO) throws Exception;
+    UpdateUserResponseDTO updateUser(UpdateUserRequestDTO userUpdateRequestDTO) throws Exception;
 
     /**
      * @param pageSize
@@ -34,5 +30,5 @@ public interface UserService {
      * @param role
      * @return
      */
-    public GetUsersPagedDTO getUsers(Integer pageSize, Integer pageNo, String sortBy, String name, String username, String role);
+    GetUsersPagedDTO getUsers(Integer pageSize, Integer pageNo, String sortBy, String name, String username, String role);
 }

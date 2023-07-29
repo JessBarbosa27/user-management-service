@@ -14,9 +14,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-/**
- * @author barbo on 22-03-2023
- */
 @Repository
 public class UserManagerRepository {
 

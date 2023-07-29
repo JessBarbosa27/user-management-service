@@ -5,14 +5,11 @@ import com.jesslabs.usermanager.dto.UpdateUserRequestDTO;
 import com.jesslabs.usermanager.model.User;
 import org.springframework.stereotype.Repository;
 
-/**
- * @author barbo on 23-03-2023
- */
 @Repository
 public class UserManagerMapper {
 
     public User mapToUser(AddUserRequestDTO userAddRequestDTO) {
-        return new User(null, userAddRequestDTO.getName(), userAddRequestDTO.getUsername(),userAddRequestDTO.getPassword(), userAddRequestDTO.getEmail(),
+        return new User(null, userAddRequestDTO.getName(), userAddRequestDTO.getUsername(), userAddRequestDTO.getPassword(), userAddRequestDTO.getEmail(),
                 userAddRequestDTO.getRole(), userAddRequestDTO.getPhone());
     }
 
