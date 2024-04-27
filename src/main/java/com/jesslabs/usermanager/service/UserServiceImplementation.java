@@ -33,18 +33,22 @@ public class UserServiceImplementation implements UserService {
 
     @Override
     public AddUserResponseDTO addUser(AddUserRequestDTO userAddRequestDTO) throws InternalServerException {
+        log.info("creating user with username: {}", userAddRequestDTO.getUsername());
         User user = mapper.addUserRequestDTOToUser(userAddRequestDTO);
         try {
             userRepository.save(user);
+            log.info("successfully created user with username: {}", userAddRequestDTO.getUsername());
+
+            return new AddUserResponseDTO(user.getId(), user.getName(), user.getUsername(), user.getEmail(), user.getRole(), user.getPhone());
         } catch (Exception e) {
             throw new InternalServerException("Unexpected error occurred while creating new user.");
         }
-        return new AddUserResponseDTO(user.getId(), user.getName(), user.getUsername(), user.getEmail(), user.getRole(), user.getPhone());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public UpdateUserResponseDTO updateUser(UpdateUserRequestDTO userUpdateRequestDTO) throws ResourceNotFoundException, InternalServerException {
+        log.info("updating user with id: {}", userUpdateRequestDTO.getId());
         User user = userRepository.findById(userUpdateRequestDTO.getId())
                 .orElseThrow(() -> {
                     String errorMessage = String.format("Could not find user with id %s", userUpdateRequestDTO.getId());
@@ -54,13 +58,14 @@ public class UserServiceImplementation implements UserService {
 
         try {
             mapper.updateUserRequestDTOToUser(userUpdateRequestDTO, user);
-
             userRepository.save(user);
+            log.info("successfully updated user with id: {}", userUpdateRequestDTO.getId());
+
+            return new UpdateUserResponseDTO(user.getId(), user.getName(), user.getUsername(), user.getEmail(), user.getRole(), user.getPhone());
         } catch (Exception e) {
-            log.error("Failed to update user", e);
+            log.error("failed to update user", e);
             throw new InternalServerException("Failed to update user due to an unexpected error.");
         }
-        return new UpdateUserResponseDTO(user.getId(), user.getName(), user.getUsername(), user.getEmail(), user.getRole(), user.getPhone());
     }
 
     @Override

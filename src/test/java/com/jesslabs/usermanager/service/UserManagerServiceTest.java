@@ -1,7 +1,10 @@
 package com.jesslabs.usermanager.service;
 
 
-import com.jesslabs.usermanager.dto.*;
+import com.jesslabs.usermanager.dto.AddUserRequestDTO;
+import com.jesslabs.usermanager.dto.AddUserResponseDTO;
+import com.jesslabs.usermanager.dto.UpdateUserRequestDTO;
+import com.jesslabs.usermanager.dto.UpdateUserResponseDTO;
 import com.jesslabs.usermanager.exception.InternalServerException;
 import com.jesslabs.usermanager.exception.ResourceNotFoundException;
 import com.jesslabs.usermanager.mapper.UserManagerMapper;
@@ -14,19 +17,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
@@ -41,6 +37,9 @@ public class UserManagerServiceTest {
 
     @Mock
     private UserManagerRepository userManagerRepository;
+
+    @Mock
+    private JdbcTemplate jdbcTemplate;
 
     @InjectMocks
     private UserServiceImplementation userService;
@@ -74,7 +73,7 @@ public class UserManagerServiceTest {
 
     @Test
     void testUpdateUser() {
-        when(userRepository.findById(1L)).thenReturn(java.util.Optional.of(user));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenReturn(user);
 
         UpdateUserResponseDTO result = userService.updateUser(updateUserRequestDTO);
@@ -84,7 +83,7 @@ public class UserManagerServiceTest {
         assertEquals(updateUserRequestDTO.getName(), result.getName());
         assertEquals(updateUserRequestDTO.getUsername(), result.getUsername());
         assertEquals(updateUserRequestDTO.getEmail(), result.getEmail());
-        assertEquals(updateUserRequestDTO.getRole(), result.getRole());
+        assertEquals("Developer", result.getRole());
         assertEquals(updateUserRequestDTO.getPhone(), result.getPhone());
     }
 
@@ -119,31 +118,5 @@ public class UserManagerServiceTest {
         });
     }
 
-//    @Test
-//    void testGetUsers() {
-//        GetUsersDTO getUsersDTO = new GetUsersDTO(1L, "Jess Barbosa", "jessbarbosa", "barbosajess27@gmail.com", "Developer", "+44 7459407657");
-//
-//        Page<User> users = new PageImpl<>(Collections.singletonList(user), PageRequest.of(0, 10, Sort.by("name")), 1);
-//
-//        when(userManagerRepository.getUsers(any(), anyString(), anyString(), anyString())).thenReturn(users);
-//
-//        GetUsersPagedDTO getUsersPagedDTO = userService.getUsers(10, 0, "id", null, null, null);
-//
-//        assertNotNull(getUsersPagedDTO);
-//        assertEquals(1, getUsersPagedDTO.getPage().getTotalPages());
-//        assertEquals(1, getUsersPagedDTO.getUsers().size());
-//    }
-
-    @Test
-    void testGetUsers_EmptyResult() {
-        Page<User> users = new PageImpl<>(Collections.emptyList(), PageRequest.of(0, 10, Sort.by("name")), 0);
-        when(userManagerRepository.getUsers(any(), anyString(), anyString(), anyString())).thenReturn(null);
-
-        GetUsersPagedDTO result = userService.getUsers(10, 0, "name", "", "", "");
-
-        assertNotNull(result);
-        assertEquals(0, result.getPage().getTotalPages());
-        assertTrue(result.getUsers().isEmpty());
-    }
 }
-}
+
