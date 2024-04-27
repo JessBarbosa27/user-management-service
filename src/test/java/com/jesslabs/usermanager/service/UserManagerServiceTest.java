@@ -102,7 +102,7 @@ public class UserManagerServiceTest {
     @Test
     void testAddUser_ThrowsException() {
         when(mapper.addUserRequestDTOToUser(any(AddUserRequestDTO.class))).thenReturn(user);
-        when(userRepository.save(any(User.class))).thenThrow(new RuntimeException("Database error"));
+        when(userRepository.save(any(User.class))).thenThrow(new RuntimeException("error"));
 
         assertThrows(InternalServerException.class, () -> {
             userService.addUser(addUserRequestDTO);
