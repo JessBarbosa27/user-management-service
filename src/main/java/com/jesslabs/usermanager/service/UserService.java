@@ -1,15 +1,14 @@
 package com.jesslabs.usermanager.service;
 
 import com.jesslabs.usermanager.dto.*;
-import org.springframework.stereotype.Service;
+import com.jesslabs.usermanager.exception.InternalServerException;
+import com.jesslabs.usermanager.exception.ResourceNotFoundException;
 
-@Service
 public interface UserService {
 
-    AddUserResponseDTO addUser(AddUserRequestDTO userAddRequestDTO) throws Exception;
+    AddUserResponseDTO addUser(AddUserRequestDTO userAddRequestDTO) throws InternalServerException;
 
-
-    UpdateUserResponseDTO updateUser(UpdateUserRequestDTO userUpdateRequestDTO) throws Exception;
+    UpdateUserResponseDTO updateUser(UpdateUserRequestDTO userUpdateRequestDTO) throws ResourceNotFoundException, InternalServerException;
 
     GetUsersPagedDTO getUsers(Integer pageSize, Integer pageNo, String sortBy, String name, String username, String role);
 }

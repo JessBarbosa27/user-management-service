@@ -3,18 +3,15 @@ package com.jesslabs.usermanager.mapper;
 import com.jesslabs.usermanager.dto.AddUserRequestDTO;
 import com.jesslabs.usermanager.dto.UpdateUserRequestDTO;
 import com.jesslabs.usermanager.model.User;
-import org.springframework.stereotype.Repository;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.MappingTarget;
 
-@Repository
-public class UserManagerMapper {
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+public interface UserManagerMapper {
 
-    public User mapToUser(AddUserRequestDTO userAddRequestDTO) {
-        return new User(null, userAddRequestDTO.getName(), userAddRequestDTO.getUsername(), userAddRequestDTO.getPassword(), userAddRequestDTO.getEmail(),
-                userAddRequestDTO.getRole(), userAddRequestDTO.getPhone());
-    }
+    User addUserRequestDTOToUser(AddUserRequestDTO userAddRequestDTO);
 
-    public User mapToUser(UpdateUserRequestDTO userUpdateRequestDTO) {
-        return new User(userUpdateRequestDTO.getId(), userUpdateRequestDTO.getName(), userUpdateRequestDTO.getUsername(), userUpdateRequestDTO.getPassword(),
-                userUpdateRequestDTO.getEmail(), userUpdateRequestDTO.getRole(), userUpdateRequestDTO.getPhone());
-    }
+    void updateUserRequestDTOToUser(UpdateUserRequestDTO userUpdateRequestDTO, @MappingTarget User user);
+
 }

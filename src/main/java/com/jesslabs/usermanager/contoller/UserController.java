@@ -1,9 +1,7 @@
 package com.jesslabs.usermanager.contoller;
 
-import com.jesslabs.usermanager.common.ApiConstant;
 import com.jesslabs.usermanager.dto.*;
 import com.jesslabs.usermanager.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -11,25 +9,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/um")
+@RequestMapping(value = "/user-management/v1/")
+@CrossOrigin
 public class UserController {
 
-    @Autowired
-    UserService userService;
+    private final UserService userService;
 
-    @PostMapping(value = ApiConstant.ADD_USER)
-    public ResponseEntity<AddUserResponseDTO> addUser(@RequestHeader HttpHeaders headers,
-                                                      @RequestBody AddUserRequestDTO request) throws Exception {
-        AddUserResponseDTO response = null;
-        try {
-            response = this.userService.addUser(request);
-            return new ResponseEntity<AddUserResponseDTO>(response, HttpStatusCode.valueOf(HttpStatus.OK.value()));
-        } catch (Exception e) {
-            throw new Exception(e.getLocalizedMessage());
-        }
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
-    @PutMapping(value = ApiConstant.UPDATE_USER)
+    @PostMapping(value = "user")
+    public ResponseEntity<AddUserResponseDTO> addUser(@RequestHeader HttpHeaders headers, @RequestBody AddUserRequestDTO addUserRequestDTO) throws Exception {
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.addUser(addUserRequestDTO));
+    }
+
+    @PutMapping(value = "user")
     public ResponseEntity<UpdateUserResponseDTO> updateUser(@RequestHeader HttpHeaders headers,
                                                             @RequestBody UpdateUserRequestDTO request) throws Exception {
         UpdateUserResponseDTO response = null;
@@ -41,7 +36,7 @@ public class UserController {
         }
     }
 
-    @GetMapping(value = ApiConstant.GET_USERS)
+    @GetMapping(value = "users")
     public ResponseEntity<GetUsersPagedDTO> getUsers(@RequestHeader HttpHeaders headers,
                                                      @RequestParam(defaultValue = "10") Integer pageSize,
                                                      @RequestParam(defaultValue = "0") Integer pageNo,

@@ -8,14 +8,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
-
 @Entity(name = "app_user")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class User implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
