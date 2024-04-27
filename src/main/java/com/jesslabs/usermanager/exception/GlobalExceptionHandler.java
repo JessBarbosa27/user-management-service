@@ -1,6 +1,7 @@
 package com.jesslabs.usermanager.exception;
 
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -19,6 +20,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<Object> handleConflictException(ConflictException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(HttpException.class)
     public ResponseEntity<Object> handleHttpException(HttpException ex) {
         return new ResponseEntity<>(ex.getMessage(), ex.getStatus());
@@ -26,7 +32,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleException(Exception ex) {
-        return new ResponseEntity<>("An unexpected error has occurred.", HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(StringUtils.isEmpty(ex.getMessage()) ? "An unexpected error has occurred." : ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }

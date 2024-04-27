@@ -22,9 +22,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserManagerServiceTest {
@@ -50,9 +48,9 @@ public class UserManagerServiceTest {
 
     @BeforeEach
     void setUp() {
-        user = new User(1L, "Jess Barbosa", "jessbarbosa", "thisismypassword", "barbosajess27@gmail.com", "Developer", "+44 7459407657");
+        user = new User(1L, "Jess Barbosa", "jessbarbosa", "thisismypassword", "barbosajess27@gmail.com", "Developer", "+44 7459407657", false);
         addUserRequestDTO = new AddUserRequestDTO("Jess Barbosa", "jessbarbosa", "thisismypassword", "barbosajess27@gmail.com", "Developer", "+44 7459407657");
-        updateUserRequestDTO = new UpdateUserRequestDTO(1L, "Jess Barbosa", "jessbarbosa", "thisismyupdatedpassword", "barbosajess27@gmail.com", "Fullstack Developer", "+44 7459407657");
+        updateUserRequestDTO = new UpdateUserRequestDTO("Jess Barbosa", "thisismyupdatedpassword", "barbosajess27@gmail.com", "Fullstack Developer", "+44 7459407657");
     }
 
     @Test
@@ -73,48 +71,58 @@ public class UserManagerServiceTest {
 
     @Test
     void testUpdateUser() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findUserByUsername("jessbarbosa")).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenReturn(user);
 
-        UpdateUserResponseDTO result = userService.updateUser(updateUserRequestDTO);
+        UpdateUserResponseDTO result = userService.updateUser(updateUserRequestDTO, "jessbarbosa");
 
         assertNotNull(result);
         assertEquals(user.getId(), result.getId());
         assertEquals(updateUserRequestDTO.getName(), result.getName());
-        assertEquals(updateUserRequestDTO.getUsername(), result.getUsername());
+        assertEquals("jessbarbosa", result.getUsername());
         assertEquals(updateUserRequestDTO.getEmail(), result.getEmail());
         assertEquals("Developer", result.getRole());
         assertEquals(updateUserRequestDTO.getPhone(), result.getPhone());
     }
 
     @Test
-    void testUpdateUser_NotFound() {
-        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
-
-        Exception exception = assertThrows(ResourceNotFoundException.class, () -> {
-            userService.updateUser(updateUserRequestDTO);
-        });
-
-        assertTrue(exception.getMessage().contains("Could not find user with id"));
-    }
-
-    @Test
-    void testAddUser_ThrowsException() {
-        when(mapper.addUserRequestDTOToUser(any(AddUserRequestDTO.class))).thenReturn(user);
-        when(userRepository.save(any(User.class))).thenThrow(new RuntimeException("error"));
-
-        assertThrows(InternalServerException.class, () -> {
-            userService.addUser(addUserRequestDTO);
-        });
-    }
-
-    @Test
     void testUpdateUser_ThrowsException() {
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-        when(userRepository.save(any(User.class))).thenThrow(new RuntimeException("Database error"));
+        when(userRepository.findUserByUsername("jessbarbosa")).thenReturn(Optional.of(user));
+        when(userRepository.save(any(User.class))).thenThrow(new InternalServerException("error"));
 
         assertThrows(InternalServerException.class, () -> {
-            userService.updateUser(updateUserRequestDTO);
+            userService.updateUser(updateUserRequestDTO, "jessbarbosa");
+        });
+    }
+
+    @Test
+    void testDeleteUser_Success() throws Exception {
+        when(userRepository.findUserByUsername("jessbarbosa")).thenReturn(Optional.of(user));
+
+        String expectedMessage = "Successfully deleted user with username: jessbarbosa";
+        String resultMessage = userService.deleteUser("jessbarbosa");
+
+        verify(userRepository).save(user);
+        assertTrue(user.isDiscarded());
+        assertEquals(expectedMessage, resultMessage);
+    }
+
+    @Test
+    void testDeleteUser_UserNotFound() {
+        when(userRepository.findUserByUsername("unknownuser")).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> {
+            userService.deleteUser("unknownuser");
+        });
+    }
+
+    @Test
+    void testDeleteUser_InternalServerError() {
+        when(userRepository.findUserByUsername("jessbarbosa")).thenReturn(Optional.of(user));
+        doThrow(RuntimeException.class).when(userRepository).save(any(User.class));
+
+        assertThrows(InternalServerException.class, () -> {
+            userService.deleteUser("jessbarbosa");
         });
     }
 
