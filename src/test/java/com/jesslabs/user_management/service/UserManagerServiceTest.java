@@ -7,9 +7,9 @@ import com.jesslabs.user_management.dto.UpdateUserRequestDTO;
 import com.jesslabs.user_management.dto.UpdateUserResponseDTO;
 import com.jesslabs.user_management.exception.InternalServerException;
 import com.jesslabs.user_management.exception.ResourceNotFoundException;
-import com.jesslabs.user_management.mapper.UserManagerMapper;
+import com.jesslabs.user_management.mapper.UserManagementMapper;
 import com.jesslabs.user_management.model.User;
-import com.jesslabs.user_management.repository.UserManagerRepository;
+import com.jesslabs.user_management.repository.UserManagementRepository;
 import com.jesslabs.user_management.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,13 +28,13 @@ import static org.mockito.Mockito.*;
 public class UserManagerServiceTest {
 
     @Mock
-    private UserManagerMapper mapper;
+    private UserManagementMapper mapper;
 
     @Mock
     private UserRepository userRepository;
 
     @Mock
-    private UserManagerRepository userManagerRepository;
+    private UserManagementRepository userManagementRepository;
 
     @Mock
     private JdbcTemplate jdbcTemplate;

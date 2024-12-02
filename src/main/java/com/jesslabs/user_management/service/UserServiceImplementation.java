@@ -4,9 +4,9 @@ import com.jesslabs.user_management.dto.*;
 import com.jesslabs.user_management.exception.ConflictException;
 import com.jesslabs.user_management.exception.InternalServerException;
 import com.jesslabs.user_management.exception.ResourceNotFoundException;
-import com.jesslabs.user_management.mapper.UserManagerMapper;
+import com.jesslabs.user_management.mapper.UserManagementMapper;
 import com.jesslabs.user_management.model.User;
-import com.jesslabs.user_management.repository.UserManagerRepository;
+import com.jesslabs.user_management.repository.UserManagementRepository;
 import com.jesslabs.user_management.repository.UserRepository;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -21,14 +21,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class UserServiceImplementation implements UserService {
 
-    private final UserManagerMapper mapper;
+    private final UserManagementMapper mapper;
     private final UserRepository userRepository;
-    private final UserManagerRepository userManagerRepository;
+    private final UserManagementRepository userManagementRepository;
 
-    public UserServiceImplementation(UserManagerMapper mapper, UserRepository userRepository, UserManagerRepository userManagerRepository) {
+    public UserServiceImplementation(UserManagementMapper mapper, UserRepository userRepository, UserManagementRepository userManagementRepository) {
         this.mapper = mapper;
         this.userRepository = userRepository;
-        this.userManagerRepository = userManagerRepository;
+        this.userManagementRepository = userManagementRepository;
     }
 
     @Override
@@ -82,7 +82,7 @@ public class UserServiceImplementation implements UserService {
     @Override
     public GetUsersPagedDTO getUsers(Integer pageSize, Integer pageNo, String sortBy, String name, String username, String role) {
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
-        Page<GetUsersDTO> pageResult = userManagerRepository.getUsers(paging, name, username, role);
+        Page<GetUsersDTO> pageResult = userManagementRepository.getUsers(paging, name, username, role);
         return new GetUsersPagedDTO(pageResult.getContent(), new PageDTO(pageResult.getTotalPages(),
                 pageResult.getNumber(), pageResult.getNumberOfElements(), pageResult.getTotalElements()));
     }

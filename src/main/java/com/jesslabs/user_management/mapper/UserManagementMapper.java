@@ -6,7 +6,7 @@ import com.jesslabs.user_management.model.User;
 import org.mapstruct.*;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
-public interface UserManagerMapper {
+public interface UserManagementMapper {
 
     User addUserRequestDTOToUser(AddUserRequestDTO userAddRequestDTO);
 

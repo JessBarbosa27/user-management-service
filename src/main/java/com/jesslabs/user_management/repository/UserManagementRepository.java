@@ -12,13 +12,13 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class UserManagerRepository {
+public class UserManagementRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
     Long totalCount = (long) 0;
 
-    public UserManagerRepository(JdbcTemplate jdbcTemplate) {
+    public UserManagementRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

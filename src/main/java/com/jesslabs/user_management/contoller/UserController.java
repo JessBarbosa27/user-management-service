@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "/user-management/v1/")
 @CrossOrigin
-@OpenAPIDefinition(info = @Info(title = "Health controller"), tags = @Tag(name = "User Controller"))
+@OpenAPIDefinition(info = @Info(title = "User controller"), tags = @Tag(name = "User Controller"))
 public class UserController {
 
     private final UserService userService;
