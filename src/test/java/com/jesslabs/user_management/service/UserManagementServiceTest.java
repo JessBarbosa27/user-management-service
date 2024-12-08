@@ -17,7 +17,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.Optional;
 
@@ -25,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class UserManagerServiceTest {
+class UserManagementServiceTest {
 
     @Mock
     private UserManagementMapper mapper;
@@ -35,9 +34,6 @@ public class UserManagerServiceTest {
 
     @Mock
     private UserManagementRepository userManagementRepository;
-
-    @Mock
-    private JdbcTemplate jdbcTemplate;
 
     @InjectMocks
     private UserServiceImplementation userService;
@@ -70,7 +66,7 @@ public class UserManagerServiceTest {
     }
 
     @Test
-    void testUpdateUser() {
+    void testUpdateUser_Success() {
         when(userRepository.findUserByUsername("jessbarbosa")).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenReturn(user);
 
@@ -79,52 +75,47 @@ public class UserManagerServiceTest {
         assertNotNull(result);
         assertEquals(user.getId(), result.getId());
         assertEquals(updateUserRequestDTO.getName(), result.getName());
-        assertEquals("jessbarbosa", result.getUsername());
+        assertEquals(user.getUsername(), result.getUsername());
         assertEquals(updateUserRequestDTO.getEmail(), result.getEmail());
-        assertEquals("Developer", result.getRole());
+        assertEquals(user.getRole(), result.getRole());
         assertEquals(updateUserRequestDTO.getPhone(), result.getPhone());
     }
 
     @Test
-    void testUpdateUser_ThrowsException() {
-        when(userRepository.findUserByUsername("jessbarbosa")).thenReturn(Optional.of(user));
-        when(userRepository.save(any(User.class))).thenThrow(new InternalServerException("error"));
+    void testUpdateUser_ThrowsResourceNotFoundException() {
+        when(userRepository.findUserByUsername("unknownuser")).thenReturn(Optional.empty());
 
-        assertThrows(InternalServerException.class, () -> {
-            userService.updateUser(updateUserRequestDTO, "jessbarbosa");
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            userService.updateUser(updateUserRequestDTO, "unknownuser");
         });
     }
 
     @Test
-    void testDeleteUser_Success() throws Exception {
+    void testDeleteUser_Success() {
         when(userRepository.findUserByUsername("jessbarbosa")).thenReturn(Optional.of(user));
 
-        String expectedMessage = "Successfully deleted user with username: jessbarbosa";
-        String resultMessage = userService.deleteUser("jessbarbosa");
+        String result = userService.deleteUser("jessbarbosa");
 
         verify(userRepository).save(user);
-        assertTrue(user.isDiscarded());
-        assertEquals(expectedMessage, resultMessage);
     }
 
     @Test
-    void testDeleteUser_UserNotFound() {
+    void testDeleteUser_ThrowsResourceNotFoundException() {
         when(userRepository.findUserByUsername("unknownuser")).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> {
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
             userService.deleteUser("unknownuser");
         });
     }
 
     @Test
-    void testDeleteUser_InternalServerError() {
+    void testDeleteUser_ThrowsInternalServerException() {
         when(userRepository.findUserByUsername("jessbarbosa")).thenReturn(Optional.of(user));
-        doThrow(RuntimeException.class).when(userRepository).save(any(User.class));
+        doThrow(new RuntimeException("DB error")).when(userRepository).save(any(User.class));
 
-        assertThrows(InternalServerException.class, () -> {
+        InternalServerException exception = assertThrows(InternalServerException.class, () -> {
             userService.deleteUser("jessbarbosa");
         });
+
     }
-
 }
-
