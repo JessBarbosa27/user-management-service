@@ -85,7 +85,7 @@ class UserManagementServiceTest {
     void testUpdateUser_ThrowsResourceNotFoundException() {
         when(userRepository.findUserByUsername("unknownuser")).thenReturn(Optional.empty());
 
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+        assertThrows(ResourceNotFoundException.class, () -> {
             userService.updateUser(updateUserRequestDTO, "unknownuser");
         });
     }
@@ -94,7 +94,7 @@ class UserManagementServiceTest {
     void testDeleteUser_Success() {
         when(userRepository.findUserByUsername("jessbarbosa")).thenReturn(Optional.of(user));
 
-        String result = userService.deleteUser("jessbarbosa");
+        userService.deleteUser("jessbarbosa");
 
         verify(userRepository).save(user);
     }
@@ -103,7 +103,7 @@ class UserManagementServiceTest {
     void testDeleteUser_ThrowsResourceNotFoundException() {
         when(userRepository.findUserByUsername("unknownuser")).thenReturn(Optional.empty());
 
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+        assertThrows(ResourceNotFoundException.class, () -> {
             userService.deleteUser("unknownuser");
         });
     }
@@ -113,7 +113,7 @@ class UserManagementServiceTest {
         when(userRepository.findUserByUsername("jessbarbosa")).thenReturn(Optional.of(user));
         doThrow(new RuntimeException("DB error")).when(userRepository).save(any(User.class));
 
-        InternalServerException exception = assertThrows(InternalServerException.class, () -> {
+        assertThrows(InternalServerException.class, () -> {
             userService.deleteUser("jessbarbosa");
         });
 

@@ -5,6 +5,10 @@ import org.springframework.data.domain.Pageable;
 
 public class SQL {
 
+    private SQL() {
+
+    }
+
     public static String getUsers(Pageable page, String name, String username, String role) {
         return "SELECT *, COUNT(1) OVER() as total  FROM app_user WHERE id IS NOT NULL"
                 + (AppUtil.isNullString(name) ? "" : " AND name ILIKE '%" + name + "%' ")
